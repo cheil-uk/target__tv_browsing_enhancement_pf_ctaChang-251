@@ -42,18 +42,27 @@ cheillondon.targetBoilerplate = (function () {
 					main.removeStuff();
 					main.addElements();
 
-					const viewMoreBtn = document.querySelector(".js-pf-cta-area > a")
-					viewMoreBtn.addEventListener('click', () => {
-						setTimeout(() => {
-						main.addElements();
-						}, 900)
-					});
-
+				const viewMoreBtn = document.querySelector(".js-pf-cta-area > a")
+				const targetNode = viewMoreBtn // Select the node that will be observed for mutations
+				const config = { attributes: true, childList: true, subtree: true };// Options for the observer (which mutations to observe)
+				const callback = function(mutationList, observer) {// Callback function to execute when mutations are observed
+								// Use traditional 'for loops' for IE 11
+								for(const mutation of mutationList) {
+												if (mutation.type === 'childList') {
+																main.addElements();
+												}
+												else if (mutation.type === 'attributes') {
+																console.log('The ' + mutation.attributeName + ' attribute was modified.');
+												}
+								}
+				};
+				const observer = new MutationObserver(callback);// Create an observer instance linked to the callback function
+				observer.observe(targetNode, config);	// Start observing the target node for configured mutations
 				} else {
 					console.log('no jquery')
 					_self.doEverythingTimeout();
 				}
-			}, 900)
+			}, 1500)
 		},
 
 
